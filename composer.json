@@ -12,7 +12,8 @@
         "symfony/http-foundation": "^3.3",
         "symfony/http-kernel": "^3.3",
         "symfony/routing": "^3.3",
-        "slim/slim": "^3.9"
+        "slim/slim": "^3.9",
+        "slim/twig-view": "^2.3"
     },
     "autoload": {
         "psr-4": {

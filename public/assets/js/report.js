@@ -22,7 +22,7 @@ var app = new Vue({
 
             }
         },
-        debug: false,
+        debug: true,
         loading: false,
         /* Vue data-tables */
         topCompetitorsColumns: [

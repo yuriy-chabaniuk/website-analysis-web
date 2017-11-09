@@ -6,10 +6,10 @@
 
 namespace App\Controllers;
 
-use App\Core\Controller\Controller;
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
 
-
-class ReportController extends Controller {
+class ReportController {
 
     private $client = null;
 
@@ -24,20 +24,10 @@ class ReportController extends Controller {
         curl_close($this->client);
     }
 
-    public function hello() {
+    public function getIndividualReport(Request $request, Response $response) {
+        $params = $request->getParsedBody();
 
-        return "<h1>Hooray</h1>";
-    }
-
-    public function report() {
-        return $this->render('report', []);
-    }
-
-    public function getIndividualReport() {
-        $request = $this->request->request;
-        $url = $request->get('url');
-
-        $analytics = [];
+        $url = $params['url'];
         if (!empty($url)) {
             $basicUrl = "https://c5wjveoci2.execute-api.us-east-1.amazonaws.com/beta/basic?url=" . $url;
 
@@ -47,7 +37,7 @@ class ReportController extends Controller {
             $keywordPlacement = json_decode($this->doRequest($keywordPlacementUrl));
         }
 
-        return $this->json([
+        return $response->withJson([
             'success' => true,
             'data' => [
                 'analytics' => $analytics,
@@ -56,14 +46,14 @@ class ReportController extends Controller {
         ]);
     }
 
-    public function getCompetitorReport() {
-        $request = $this->request->request;
+    public function getCompetitorReport(Request $request, Response $response) {
+        $params = $request->getParsedBody();
 
         $analyticsData = [];
         $topCompetitors = [];
 
-        $url = $request->get('url');
-        $competitorUrls = $request->get('competitors');
+        $url = $params['url'];
+        $competitorUrls = $params['competitors'];
         if (!empty($url)) {
             $topCompetitors = $this->fetchCompetitorsInfo($url);
 
@@ -87,13 +77,13 @@ class ReportController extends Controller {
             }
         }
 
-        return $this->json([
+        return $response->withJson([
             'success' => true,
             'data' => [
                 'analytics' => $analyticsData,
                 'topCompetitors' => $topCompetitors
             ]
-        ]);
+        ], 200);
     }
 
     protected function doRequest($url) {
